@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include "client_functions.c"
+#include "echo_c_functions.c"
 
 int main(int argc, char *argv[])
 {

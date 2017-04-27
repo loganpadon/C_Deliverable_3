@@ -7,12 +7,19 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/select.h>
 #include <unistd.h>
 #include <errno.h>
+
+//socket for log communication
+int log_fd;
+
+//addr for log server
+struct sockaddr_in remote;
 
 void error(const char *msg) {
      perror(msg);
@@ -31,7 +38,7 @@ void doStuffTCP(int fd, char buff[], int buff_len) {
   close(fd);
 
   //log
-  log(buff);
+  log_data(&buff, n);
 }
 
 void doStuffUDP(int fd, char buff[], int buff_len) {
@@ -47,15 +54,33 @@ void doStuffUDP(int fd, char buff[], int buff_len) {
   sendto(fd,buff,length,0,(struct sockaddr *)&remote,len);
 
   //log
-  log(buff);
+  log_data(&buff, length);
+}
+
+void init_log(char *name) {
+  struct hostent *log_server;
+  log_server = gethostbyname(name);
+  if (log_server == NULL) {
+      fprintf(stderr,"ERROR, no such host\n");
+      exit(0);
+  }
+  int PORT = 9999;
+  bzero((char *) &remote, sizeof(remote));
+  remote.sin_family = AF_INET;
+  bcopy((char *)log_server->h_addr,
+       (char *)&remote.sin_addr.s_addr,
+       log_server->h_length);
+  remote.sin_port = htons(PORT);
+  log_fd = socket(AF_INET, SOCK_STREAM, 0);
+  if (bind(log_fd, (struct remote *) &remote, sizeof(remote)) < 0)
+      error("ERROR on binding");
 }
 
 //logs the data to the log server
-void log(char buff[]){
-     struct sockaddr_in remote;
-     int socket = socket(gethostbyname("localhost"), SOCK_STREAM, 0);
-     bind(socket, 9999, 2)
-     sendto(socket, buff, buff.length-1, (struct sockaddr *)&remote, sizeof(remote));
+void log_data(char buff[], int length){
+  printf("seding data");
+  sendto(log_fd, buff, length-1, 0, (struct sockaddr *)&remote, sizeof(remote));
+  printf("data sent");
 }
 
 //waits with no hang to prevent zombie processes

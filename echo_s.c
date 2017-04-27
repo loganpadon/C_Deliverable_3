@@ -1,5 +1,5 @@
 /* A simple echo server in the internet domain using TCP and UDP
-   The port number is passed as an argument 
+   The port number is passed as an argument
    Written by Bailey Miller*/
 
 #include <stdio.h>
@@ -8,13 +8,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <netdb.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <sys/select.h>
 #include <unistd.h>
 #include <errno.h>
-#include "server_functions.c"
+#include "echo_s_functions.c"
 
 int main(int argc, char *argv[]) {
      //buffer for recieved messages
@@ -34,6 +35,15 @@ int main(int argc, char *argv[]) {
      }
      //get port from command line arugments
      portno = atoi(argv[1]);
+
+     if (argc > 2) {
+       if(strcmp(argv[2], "-logip") == 0) {
+         init_log(argv[3]);
+       }
+     }
+     else {
+       init_log("localhost");
+     }
 
      //init udp socket
      udp_fd = socket(AF_INET, SOCK_DGRAM, 0);

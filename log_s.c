@@ -23,7 +23,7 @@ void SigCatcher(int n) {
 }
 
 //logs char array to file
-void log(char buff[]) {
+void log2file(char buff[]) {
     time_t t = time(NULL);
     struct tm tm = *localtime(&t);
     printf("%d-%d-%d %d:%d:%d\t%s\n",
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
                error("ERROR on recv");
           if ((pid = fork()) == 0) { //child process
                buffer[length] = '\0';
-               log(buffer);
+               log2file(buffer);
                exit(0);
           }
           length = -1; //parent process
