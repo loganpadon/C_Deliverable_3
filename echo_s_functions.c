@@ -64,7 +64,9 @@ void init_log(char *name) {
       fprintf(stderr,"ERROR, no such host\n");
       exit(0);
   }
-  int PORT = 9999;
+     printf ("enter in a port  # ");
+        scanf ("%d",&righe);
+  int PORT = %d;
   bzero((char *) &remote, sizeof(remote));
   remote.sin_family = AF_INET;
   bcopy((char *)log_server->h_addr,
